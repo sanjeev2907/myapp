@@ -1,7 +1,12 @@
-pipeline {
+ pipeline {
     agent any
 
+    environment {
+        APP_PORT = "8000"
+    }
+
     stages {
+
         stage('Clone') {
             steps {
                 git branch: 'main', url: 'https://github.com/sanjeev2907/myapp.git'
@@ -11,8 +16,18 @@ pipeline {
         stage('Setup Environment') {
             steps {
                 sh '''
-                python3.12 -m venv venv
+                python3 -m venv venv
+                venv/bin/pip install --upgrade pip
                 venv/bin/pip install -r requirements.txt
+                '''
+            }
+        }
+
+        stage('Test') {
+            steps {
+                sh '''
+                echo "Running basic test..."
+                venv/bin/python -m py_compile app.py
                 '''
             }
         }
@@ -20,10 +35,24 @@ pipeline {
         stage('Run App') {
             steps {
                 sh '''
-                pkill gunicorn || true
-                nohup venv/bin/gunicorn app:app --bind 0.0.0.0:8000 &
+                echo "Starting application..."
+                pkill -f gunicorn || true
+                nohup venv/bin/gunicorn app:app --bind 0.0.0.0:$APP_PORT &
                 '''
             }
+        }
+    }
+
+    post {
+        success {
+            mail to: 'yourmail@gmail.com',
+                 subject: "✅ Build Success",
+                 body: "Jenkins pipeline executed successfully."
+        }
+        failure {
+            mail to: 'yourmail@gmail.com',
+                 subject: "❌ Build Failed",
+                 body: "Jenkins pipeline failed. Please check logs."
         }
     }
 }
