@@ -27,14 +27,13 @@ pipeline {
     post {
         success {
             mail to: 'sanjeevan3236@gmail.com',
-                 subject: "✅ Build SUCCESS: ${env.JOB_NAME}",
-                 body: "Build #${env.BUILD_NUMBER} completed successfully.\nCheck: ${env.BUILD_URL}"
+                 subject: "SUCCESS: Build #${BUILD_NUMBER}",
+                 body: "Build completed successfully!"
         }
-
         failure {
             mail to: 'sanjeevan3236@gmail.com',
-                 subject: "❌ Build FAILED: ${env.JOB_NAME}",
-                 body: "Build #${env.BUILD_NUMBER} failed.\nCheck: ${env.BUILD_URL}"
+                 subject: "FAILURE: Build #${BUILD_NUMBER}",
+                 body: "Build failed. Please check Jenkins."
         }
     }
 }
