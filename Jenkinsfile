@@ -23,4 +23,18 @@ pipeline {
             }
         }
     }
+
+    post {
+        success {
+            mail to: 'sanjeevan3236@gmail.com',
+                 subject: "✅ Build SUCCESS: ${env.JOB_NAME}",
+                 body: "Build #${env.BUILD_NUMBER} completed successfully.\nCheck: ${env.BUILD_URL}"
+        }
+
+        failure {
+            mail to: 'sanjeevan3236@gmail.com',
+                 subject: "❌ Build FAILED: ${env.JOB_NAME}",
+                 body: "Build #${env.BUILD_NUMBER} failed.\nCheck: ${env.BUILD_URL}"
+        }
+    }
 }
